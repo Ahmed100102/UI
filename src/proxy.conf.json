@@ -1,0 +1,17 @@
+{
+  "/elasticsearch": {
+    "target": "http://10.254.117.52:9200",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/elasticsearch": ""
+    }
+  },
+
+  "/api": {
+    "target": "http://localhost:5000",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": { "^/api": "" }
+  }
+}

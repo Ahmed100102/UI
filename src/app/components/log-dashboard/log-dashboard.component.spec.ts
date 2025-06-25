@@ -1,0 +1,23 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { LogDashboardComponent } from './log-dashboard.component';
+
+describe('LogDashboardComponent', () => {
+  let component: LogDashboardComponent;
+  let fixture: ComponentFixture<LogDashboardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LogDashboardComponent]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(LogDashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

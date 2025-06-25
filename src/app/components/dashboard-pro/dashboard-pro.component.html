@@ -1,0 +1,98 @@
+<div class="container my-4">
+  <div class="card p-4 shadow-sm">
+    <h4 class="mb-4 text-center">📊 Log Dashboard</h4>
+
+    <!-- Statistiques des erreurs dans deux panneaux -->
+<div class="row mb-4 text-center">
+  <div class="col-md-6">
+    <div class="card border-danger shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title text-danger">Total Errors</h5>
+        <p class="display-6 fw-bold text-danger">{{ totalErrors }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card border-warning shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title text-warning">Error Rate </h5>
+        <p class="display-6 fw-bold text-warning">{{ errorRate }}%</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Filters -->
+    <form class="row g-3 justify-content-center mb-4">
+      <div class="col-md-3">
+        <label for="startDate" class="form-label">Start Date</label>
+        <input type="date" id="startDate" class="form-control" [(ngModel)]="startDate" name="startDate">
+      </div>
+      <div class="col-md-3">
+        <label for="endDate" class="form-label">End Date</label>
+        <input type="date" id="endDate" class="form-control" [(ngModel)]="endDate" name="endDate">
+      </div>
+      <div class="col-md-3">
+        <label for="logType" class="form-label">Log Type</label>
+        <select id="logType" class="form-select" [(ngModel)]="selectedType" name="logType">
+          <option value="">All</option>
+          <option value="ERROR">ERROR</option>
+          <option value="INFO">INFO</option>
+          <option value="WARNING">WARNING</option>
+          <option value="DEBUG">DEBUG</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label for="platform" class="form-label">Platform</label>
+        <select id="platform" class="form-select" [(ngModel)]="selectedPlatform" name="platform">
+          <option value="">All</option>
+          <option value="FISCD">FISCD</option>
+          <option value="VGM">VGM</option>
+        </select>
+      </div>
+      <div class="col-md-auto d-flex align-items-end">
+        <button type="button" class="btn btn-primary" (click)="fetchLogs()">Apply Filter</button>
+      </div>
+    </form>
+
+    <!-- Chart -->
+    <div class="mb-5">
+      <canvas baseChart
+              [data]="chartData"
+              [options]="chartOptions"
+              chartType="bar"
+              class="w-100">
+      </canvas>
+    </div>
+
+    <!-- Table -->
+    <h5 class="mb-3">Detailed Log Summary by Day</h5>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>ERROR</th>
+            <th>INFO</th>
+            <th>WARNING</th>
+            <th>DEBUG</th>
+            <th>OTHER</th>
+            <th>Dominant Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of logSummary">
+            <td>{{ row.date }}</td>
+            <td [ngClass]="{ 'table-danger fw-bold': row.counts.ERROR > 0 }">{{ row.counts.ERROR }}</td>
+            <td>{{ row.counts.INFO }}</td>
+            <td>{{ row.counts.WARNING }}</td>
+            <td>{{ row.counts.DEBUG }}</td>
+            <td>{{ row.counts.AUTRE }}</td>
+            <td><span class="fw-bold">{{ row.dominantType }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

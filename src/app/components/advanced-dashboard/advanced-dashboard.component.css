@@ -1,0 +1,32 @@
+.dashboard-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  color: #0d6efd;
+}
+
+.date-info {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.chart-wrapper {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-description {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}

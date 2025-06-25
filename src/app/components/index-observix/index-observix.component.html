@@ -1,0 +1,61 @@
+<div class="mb-4">
+  <label for="indexSelect">Choose a platform:</label>
+  <select id="indexSelect" [(ngModel)]="selectedIndex" class="form-control">
+    <option *ngFor="let index of indexes" [value]="index">{{ index }}</option>
+  </select>
+</div>
+
+<div *ngIf="selectedChart as chart">
+  <h4 class="mb-3 text-center">{{ chart.index }}</h4>
+
+  <c-row>
+    <c-col xs="12" md="6" xl="4">
+      <c-card class="c-card">
+        <c-card-header>Logs per Hour</c-card-header>
+        <c-card-body>
+          <canvas baseChart [data]="chart.hourData" [type]="'bar'" [options]="chartOptions"></canvas>
+        </c-card-body>
+      </c-card>
+    </c-col>
+
+    <c-col xs="12" md="6">
+      <c-card class="c-card">
+        <c-card-header>Error Types</c-card-header>
+        <c-card-body>
+          <canvas baseChart [data]="chart.errorTypeData" [type]="'bar'" [options]="chartOptions"></canvas>
+        </c-card-body>
+      </c-card>
+    </c-col>
+
+    <c-col xs="12" md="6">
+      <c-card class="c-card">
+        <c-card-header>Top 5 Error Messages</c-card-header>
+        <c-card-body>
+          <canvas baseChart [data]="chart.errorMessageData" [type]="'pie'" [options]="chartOptions"></canvas>
+        </c-card-body>
+      </c-card>
+    </c-col>
+
+    <c-col xs="12" md="6">
+      <c-card class="c-card">
+        <c-card-header>Repeated Error Messages</c-card-header>
+        <c-card-body>
+          <table class="table table-striped table-sm">
+            <thead>
+              <tr>
+                <th>Message</th>
+                <th>Occurrences</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let msg of chart.repeatedMessages">
+                <td>{{ msg[0] }}</td>
+                <td>{{ msg[1] }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</div>

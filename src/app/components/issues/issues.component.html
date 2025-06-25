@@ -1,0 +1,909 @@
+<div class="main-content">
+  <div class="dashboard-container">
+    <!-- Analysis card displayed at the top -->
+    <div class="analysis-section" *ngIf="selectedAnalysis">
+      <div class="analysis-card">
+        <div class="card-header analysis-header">
+          <div class="header-title">
+            <i class="fas fa-brain"></i>
+            <span>Observix Analysis</span>
+          </div>
+          <button class="close-btn" (click)="selectedAnalysis = null">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="analysis-content">
+          <!-- Timeline Section -->
+          <div class="analysis-section-item timeline-section">
+            <h5 class="analysis-title">
+              <i class="fas fa-history"></i>
+              Analysis Timeline
+            </h5>
+            <div class="timeline-container">
+              <div class="timeline-item">
+                <div class="timeline-marker timeline-start">
+                  <i class="fas fa-play"></i>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-time">{{ selectedAnalysis._source?.timestamp | date:'HH:mm:ss' }}</div>
+                  <div class="timeline-title">Error Detected</div>
+                  <div class="timeline-description">System logged initial error event</div>
+                </div>
+              </div>
+              
+              <div class="timeline-item">
+                <div class="timeline-marker timeline-analysis">
+                  <i class="fas fa-search"></i>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-time">{{ selectedAnalysis._source?.rca_details?.metadata?.analysis_timestamp | date:'HH:mm:ss' }}</div>
+                  <div class="timeline-title">RCA Analysis Started</div>
+                  <div class="timeline-description">Root cause analysis initiated</div>
+                </div>
+              </div>
+              
+              <div class="timeline-item" *ngIf="selectedAnalysis._source?.rca_details?.root_causes?.length > 0">
+                <div class="timeline-marker timeline-cause">
+                  <i class="fas fa-bug"></i>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-time">{{ selectedAnalysis._source?.rca_details?.metadata?.analysis_timestamp | date:'HH:mm:ss' }}</div>
+                  <div class="timeline-title">Root Causes Identified</div>
+                  <div class="timeline-description">{{ selectedAnalysis._source.rca_details.root_causes.length }} potential cause(s) found</div>
+                </div>
+              </div>
+              
+              <div class="timeline-item" *ngIf="selectedAnalysis._source?.remediation_plan">
+                <div class="timeline-marker timeline-plan">
+                  <i class="fas fa-tools"></i>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-time">{{ selectedAnalysis._source?.remediation_metadata?.remediation_timestamp | date:'HH:mm:ss' }}</div>
+                  <div class="timeline-title">Remediation Plan Created</div>
+                  <div class="timeline-description">{{ selectedAnalysis._source?.remediation_plan?.steps?.length || 0 }} step(s) defined</div>
+                </div>
+              </div>
+              
+              <div class="timeline-item timeline-pending">
+                <div class="timeline-marker timeline-pending">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-time">Pending</div>
+                  <div class="timeline-description">Remediation plan ready for execution</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Metadata -->
+          <div class="analysis-section-item">
+            <h5 class="analysis-title">
+              <i class="fas fa-info-circle"></i>
+              Metadata
+            </h5>
+            <div class="metadata-grid">
+              <div class="metadata-item">
+                <span class="metadata-label">Log ID:</span>
+                <span class="metadata-value">{{ selectedAnalysis._source?.log_id }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Priority:</span>
+                <span class="metadata-value priority-{{ selectedAnalysis._source?.priority?.toLowerCase() }}">{{ selectedAnalysis._source?.priority }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Timestamp:</span>
+                <span class="metadata-value">{{ selectedAnalysis._source?.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Index:</span>
+                <span class="metadata-value">{{ selectedAnalysis._index || 'N/A' }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Version:</span>
+                <span class="metadata-value">{{ selectedAnalysis._version || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Details -->
+          <div class="analysis-section-item" *ngIf="selectedAnalysis._source?.error_details">
+            <h5 class="analysis-title">
+              <i class="fas fa-exclamation-triangle"></i>
+              Error Details
+            </h5>
+            <div class="error-details">
+              <div class="detail-item">
+                <span class="detail-label">Error Timestamp:</span>
+                <span class="detail-value">{{ selectedAnalysis._source.error_details?.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Log Level:</span>
+                <span class="detail-value level-badge level-{{ selectedAnalysis._source.error_details?.log_level?.toLowerCase() }}">{{ selectedAnalysis._source.error_details?.log_level }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Log Type:</span>
+                <span class="detail-value">{{ selectedAnalysis._source.error_details?.log_type }}</span>
+              </div>
+              <div class="detail-item full-width">
+                <span class="detail-label">Log Message:</span>
+                <div class="detail-value message-box">{{ selectedAnalysis._source.error_details?.log_message }}</div>
+              </div>
+              <div class="detail-item full-width">
+                <span class="detail-label">Summary:</span>
+                <div class="detail-value">{{ selectedAnalysis._source.error_details?.summary }}</div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Java Class:</span>
+                <span class="detail-value">{{ selectedAnalysis._source.error_details?.java_class || 'N/A' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Thread:</span>
+                <span class="detail-value">{{ selectedAnalysis._source.error_details?.thread || 'N/A' }}</span>
+              </div>
+              <div class="detail-item full-width">
+                <span class="detail-label">Stack Trace:</span>
+                <div class="detail-value">{{ selectedAnalysis._source.error_details?.stack_trace || 'N/A' }}</div>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Component:</span>
+                <span class="detail-value">{{ selectedAnalysis._source.error_details?.component || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RCA Summary -->
+          <div class="analysis-section-item">
+            <h5 class="analysis-title">
+              <i class="fas fa-clipboard-list"></i>
+              RCA Summary
+            </h5>
+            <p class="analysis-text">
+              {{ selectedAnalysis._source?.rca_details?.summary || 'No summary available.' }}
+            </p>
+          </div>
+
+          <!-- Detailed Analysis -->
+          <div class="analysis-section-item">
+            <h6 class="analysis-subtitle">
+              <i class="fas fa-search-plus"></i>
+              Detailed Analysis
+            </h6>
+            <p class="analysis-text">
+              {{ selectedAnalysis._source?.rca_details?.detailed_analysis || 'No detailed analysis available.' }}
+            </p>
+          </div>
+
+          <!-- RCA Metadata -->
+          <div class="analysis-section-item" *ngIf="selectedAnalysis._source?.rca_details">
+            <h6 class="analysis-subtitle">
+              <i class="fas fa-tags"></i>
+              RCA Metadata
+            </h6>
+            <div class="metadata-grid">
+              <div class="metadata-item">
+                <span class="metadata-label">Analysis Timestamp:</span>
+                <span class="metadata-value">{{ selectedAnalysis._source.rca_details?.metadata?.analysis_timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Log Level:</span>
+                <span class="metadata-value">{{ selectedAnalysis._source.rca_details?.metadata?.log_level }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Log Type:</span>
+                <span class="metadata-value">{{ selectedAnalysis._source.rca_details?.metadata?.log_type }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Confidence:</span>
+                <span class="metadata-value confidence-{{ selectedAnalysis._source.rca_details?.confidence?.toLowerCase() }}">{{ selectedAnalysis._source.rca_details?.confidence || 'N/A' }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Severity:</span>
+                <span class="metadata-value severity-{{ selectedAnalysis._source.rca_details?.severity?.toLowerCase() }}">{{ selectedAnalysis._source.rca_details?.severity || 'N/A' }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Category:</span>
+                <span class="metadata-value">{{ selectedAnalysis._source.rca_details?.category || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- System State -->
+          <div class="analysis-section-item" *ngIf="selectedAnalysis._source?.rca_details?.system_state">
+            <h6 class="analysis-subtitle">
+              <i class="fas fa-cogs"></i>
+              System State
+            </h6>
+            <div class="system-state">
+              <div class="state-section" *ngIf="selectedAnalysis._source.rca_details.system_state.affected_components?.length > 0">
+                <span class="state-label">Affected Components:</span>
+                <div class="state-tags">
+                  <span *ngFor="let component of selectedAnalysis._source.rca_details.system_state.affected_components" class="state-tag component-tag">
+                    {{ component }}
+                  </span>
+                </div>
+              </div>
+              <div class="state-section" *ngIf="selectedAnalysis._source.rca_details.system_state?.error_patterns?.length > 0">
+                <span class="state-label">Error Patterns:</span>
+                <div class="state-tags">
+                  <span *ngFor="let pattern of selectedAnalysis._source.rca_details.system_state.error_patterns" class="state-tag pattern-tag">
+                    {{ pattern }}
+                  </span>
+                </div>
+              </div>
+              <div class="state-section" *ngIf="selectedAnalysis._source.rca_details.system_state?.environmental_factors?.length > 0">
+                <span class="state-label">Environmental Factors:</span>
+                <div class="state-tags">
+                  <span *ngFor="let factor of selectedAnalysis._source.rca_details.system_state.environmental_factors" class="state-tag factor-tag">
+                    {{ factor }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Identified Root Causes -->
+          <div class="analysis-section-item" *ngIf="selectedAnalysis._source?.rca_details?.root_causes?.length > 0">
+            <h6 class="analysis-subtitle">
+              <i class="fas fa-exclamation-triangle"></i>
+              Identified Root Causes
+            </h6>
+            <div class="causes-list">
+              <div *ngFor="let cause of selectedAnalysis._source.rca_details.root_causes" class="cause-item">
+                <div class="cause-header">
+                  <i class="fas fa-bug"></i>
+                  <strong>{{ cause.cause }}</strong>
+                  <span class="probability-badge probability-{{ cause.probability?.toLowerCase() }}">
+                    {{ cause.probability }}
+                  </span>
+                </div>
+                <div class="cause-details">
+                  <div class="detail-item">
+                    <span class="detail-label">Impacted Areas:</span>
+                    <span class="detail-value">{{ cause.impact_areas?.join(', ') }}</span>
+                  </div>
+                  <div class="detail-item full-width">
+                    <span class="detail-label">Technical Details:</span>
+                    <div class="detail-value">{{ cause.technical_details }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recommended Actions -->
+          <div class="analysis-section-item" *ngIf="selectedAnalysis._source?.rca_details?.recommended_actions?.length > 0">
+            <h6 class="analysis-subtitle">
+              <i class="fas fa-lightbulb"></i>
+              Recommended Actions
+            </h6>
+            <ul class="recommendations-list">
+              <li *ngFor="let action of selectedAnalysis._source.rca_details.recommended_actions" class="recommendation-item">
+                <i class="fas fa-arrow-right"></i>
+                {{ action }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Risk Assessment -->
+          <div class="analysis-section-item" *ngIf="selectedAnalysis._source?.risk_assessment">
+            <h6 class="analysis-subtitle">
+              <i class="fas fa-exclamation-circle"></i>
+              Risk Assessment
+            </h6>
+            <div class="risk-overview">
+              <div class="risk-level">
+                <span class="risk-label">Impact Level:</span>
+                <span class="risk-value impact-{{ selectedAnalysis._source.risk_assessment?.impact_level?.toLowerCase() }}">
+                  {{ selectedAnalysis._source.risk_assessment?.impact_level }}
+                </span>
+              </div>
+            </div>
+            <div *ngFor="let risk of selectedAnalysis._source.risk_assessment?.potential_risks" class="risk-item">
+              <div class="risk-content">
+                <div class="risk-description">
+                  <i class="fas fa-warning"></i>
+                  <strong>Risk:</strong> {{ risk.risk }}
+                </div>
+                <div class="mitigation-description">
+                  <i class="fas fa-shield-alt"></i>
+                  <strong>Mitigation:</strong> {{ risk.mitigation }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Required Resources -->
+          <div class="analysis-section-item" *ngIf="selectedAnalysis._source?.required_resources?.length > 0">
+            <h6 class="analysis-subtitle">
+              <i class="fas fa-users-cog"></i>
+              Required Resources
+            </h6>
+            <div class="resources-grid">
+              <div *ngFor="let resource of selectedAnalysis._source.required_resources" class="resource-item">
+                <div class="resource-header">
+                  <span class="resource-type">{{ resource.type }}</span>
+                </div>
+                <div class="resource-details">
+                  <div class="resource-description">
+                    <strong>{{ resource.description }}</strong>
+                  </div>
+                  <div class="resource-reason">
+                    {{ resource.reason || 'No reason specified.' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Remediation Plan -->
+          <div class="analysis-section-item" *ngIf="selectedAnalysis._source?.remediation_plan">
+            <h6 class="analysis-subtitle">
+              <i class="fas fa-tools"></i>
+              Remediation Plan
+            </h6>
+            <div class="remediation-summary">
+              <h6 class="analysis-subsubtitle">Summary</h6>
+              <p class="analysis-text">
+                {{ selectedAnalysis._source.remediation_plan?.summary || 'No remediation summary available.' }}
+              </p>
+            </div>
+            <!-- Estimated Timeline -->
+            <div class="timeline-section" *ngIf="selectedAnalysis._source.remediation_plan?.estimated_timeline">
+              <h6 class="analysis-subsubtitle">
+                <i class="fas fa-clock"></i>
+                Estimated Timeline
+              </h6>
+              <div class="timeline-info">
+                <div class="total-duration">
+                  <span class="duration-label">Total Duration:</span>
+                  <span class="duration-value">{{ selectedAnalysis._source.remediation_plan.estimated_timeline?.total_duration }}</span>
+                </div>
+                <div class="timeline-breakdown" *ngIf="selectedAnalysis._source.remediation_plan.estimated_timeline?.breakdown?.length > 0">
+                  <h6>Phase Breakdown:</h6>
+                  <div *ngFor="let phase of selectedAnalysis._source.remediation_plan.estimated_timeline.breakdown" class="phase-item">
+                    <span class="phase-name">{{ phase.phase }}</span>
+                    <span class="phase-duration">{{ phase.duration }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Prerequisites -->
+            <div class="prerequisites-section" *ngIf="selectedAnalysis._source.remediation_plan?.prerequisites?.length > 0">
+              <h6 class="analysis-subsubtitle">
+                <i class="fas fa-check-circle"></i>
+                Prerequisites
+              </h6>
+              <ul class="prerequisites-list">
+                <li *ngFor="let prereq of selectedAnalysis._source.remediation_plan.prerequisites" class="prerequisite-item">
+                  <i class="fas fa-arrow-right"></i>
+                  {{ prereq }}
+                </li>
+              </ul>
+            </div>
+
+            <!-- Detailed Steps -->
+            <div class="steps-section" *ngIf="selectedAnalysis._source.remediation_plan?.steps?.length > 0">
+              <h6 class="analysis-subsubtitle">
+                <i class="fas fa-list-ol"></i>
+                Remediation Steps
+              </h6>
+              <div *ngFor="let step of selectedAnalysis._source.remediation_plan.steps" class="remediation-step">
+                <div class="step-header">
+                  <span class="step-number">{{ step.step_number }}</span>
+                  <span class="step-title">Step {{ step.step_number }}</span>
+                </div>
+                <div class="step-content">
+                  <div class="step-item">
+                    <strong><i class="fas fa-bullseye"></i> Purpose:</strong>
+                    <p>{{ step.purpose || 'No purpose specified.' }}</p>
+                  </div>
+                  <div class="step-item">
+                    <strong><i class="fas fa-play"></i> Action:</strong>
+                    <p>{{ step.action || 'No action specified.' }}</p>
+                  </div>
+                  <div class="step-item">
+                    <strong><i class="fas fa-check-double"></i> Verification:</strong>
+                    <p>{{ step.verification || 'No verification specified.' }}</p>
+                  </div>
+                  <div class="step-item">
+                    <strong><i class="fas fa-target"></i> Expected Outcome:</strong>
+                    <p>{{ step.expected_outcome || 'No expected outcome specified.' }}</p>
+                  </div>
+                  <div class="step-item">
+                    <strong><i class="fas fa-undo"></i> Fallback:</strong>
+                    <p>{{ step.fallback || 'No fallback specified.' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="dashboard-header">
+      <div class="header-content">
+        <h2>
+          <i class="fas fa-chart-line header-icon"></i>
+          Platform Logs
+        </h2>
+      </div>
+    </div>
+
+    <!-- Platform Filter Buttons -->
+    <div class="filters-card">
+      <div class="card-header">
+        <h5><i class="fas fa-filter"></i> Platform Filters</h5>
+      </div>
+      <div class="platform-filters">
+        <button 
+          class="platform-btn" 
+          [class.active]="selectedPlatform === 'all'" 
+          (click)="filterByPlatform('all')">
+          <i class="fas fa-globe"></i>
+          All
+        </button>
+        <button 
+          class="platform-btn" 
+          [class.active]="selectedPlatform === 'vgm'" 
+          (click)="filterByPlatform('vgm')">
+          <i class="fas fa-server"></i>
+          VGM
+        </button>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <!-- Main Table Column -->
+      <div class="table-section">
+        <div class="table-card">
+          <div class="card-header">
+            <h5><i class="fas fa-list-alt"></i> System Logs</h5>
+            <div class="table-stats">
+              <span class="stats-badge">{{ filteredLogs.length }} records</span>
+            </div>
+          </div>
+
+          <div class="table-container" *ngIf="filteredLogs.length > 0; else noLogs">
+            <table class="logs-table">
+              <thead>
+                <tr>
+                  <th class="th-timestamp">⏱ Timestamp</th>
+                  <th class="th-level">Level</th>
+                  <th class="th-message">Message</th>
+                  <th class="th-source">Source</th>
+                  <th class="th-action" *ngIf="selectedPlatform === 'vgm' || selectedPlatform === 'all'">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let log of filteredLogs" class="log-row">
+                  <td class="td-timestamp">
+                    <div class="timestamp-container">
+                      <i class="fas fa-clock timestamp-icon"></i>
+                      <span>{{ log['@timestamp'] | date:'dd/MM/yy HH:mm' }}</span>
+                    </div>
+                  </td>
+                  <td class="td-level">
+                    <span class="level-badge" 
+                          [class.level-error]="log.level === 'ERROR'"
+                          [class.level-warn]="log.level === 'WARN'"
+                          [class.level-info]="log.level === 'INFO'"
+                          [class.level-debug]="log.level === 'DEBUG'">
+                      {{ log.level }}
+                    </span>
+                  </td>
+                  <td class="td-message">
+                    <div class="message-container">
+                      <span class="message-text" [title]="log.message || log.log_message || ''">
+                        {{ (log.message || log.log_message || '') | slice:0:100 }}
+                        <span *ngIf="(log.message || log.log_message || '').length > 100">...</span>
+                      </span>
+                    </div>
+                  </td>
+                  <td class="td-source">
+                    <div class="source-container">
+                      <i class="fas fa-{{ getSourceIcon(log.source || 'default') }} source-icon"></i>
+                      <span class="source-text">{{ log.source | titlecase }}</span>
+                    </div>
+                  </td>
+                  <td class="td-action" *ngIf="log.source === 'vgm'">
+                    <button class="btn-analyze" (click)="analyze(log)">
+                      <i class="fas fa-microscope"></i>
+                      Analyze
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- No Logs Template -->
+          <ng-template #noLogs>
+            <div class="empty-state">
+              <i class="fas fa-search empty-icon"></i>
+              <h6>No logs found</h6>
+              <p>No logs found for this platform</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Timeline Styles */
+.timeline-section {
+  margin-bottom: 2rem;
+}
+
+.timeline-container {
+  position: relative;
+  padding-left: 30px;
+}
+
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, #007bff, #28a745);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -22px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: white;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.timeline-start { background-color: #dc3545; }
+.timeline-analysis { background-color: #007bff; }
+.timeline-cause { background-color: #fd7e14; }
+.timeline-plan { background-color: #28a745; }
+.timeline-pending { 
+  background-color: #6c757d; 
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(108, 117, 125, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(108, 117, 125, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(108, 117, 125, 0); }
+}
+
+.timeline-content {
+  margin-left: 20px;
+  flex: 1;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 3px solid #007bff;
+}
+
+.timeline-time {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.timeline-title {
+  font-weight: 600;
+  color: #343a40;
+  margin: 0.25rem 0;
+}
+
+.timeline-description {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* Metadata Grid */
+.metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.metadata-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.metadata-label {
+  font-weight: 600;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.metadata-value {
+  color: #343a40;
+  font-size: 1rem;
+}
+
+.priority-high { color: #dc3545; }
+.priority-medium { color: #fd7e14; }
+.priority-low { color: #28a745; }
+
+/* Error Details */
+.error-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: #343a40;
+  font-size: 1rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.message-box {
+  background: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+.level-warn { background-color: #fd7e14; color: white; }
+.level-error { background-color: #dc3545; color: white; }
+
+/* System State */
+.system-state {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.state-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.state-label {
+  font-weight: 600;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.state-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.state-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: white;
+}
+
+.component-tag { background-color: #007bff; }
+.pattern-tag { background-color: #fd7e14; }
+.factor-tag { background-color: #6c757d; }
+
+/* Root Causes */
+.causes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cause-item {
+  border-left: 3px solid #fd7e14;
+  padding-left: 1rem;
+}
+
+.cause-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.probability-high { background-color: #dc3545; }
+.probability-medium { background-color: #fd7e14; }
+.probability-low { background-color: #28a745; }
+
+.cause-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Recommendations */
+.recommendations-list {
+  list-style: none;
+  padding: 0;
+}
+
+.recommendation-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Risk Assessment */
+.risk-overview {
+  margin-bottom: 1rem;
+}
+
+.risk-level {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.risk-label {
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.risk-value {
+  font-weight: 600;
+}
+
+.impact-high { color: #dc3545; }
+.impact-medium { color: #fd7e14; }
+.impact-low { color: #28a745; }
+
+.risk-item {
+  border-left: 3px solid #dc3545;
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+.risk-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Resources */
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.resource-item {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.resource-header {
+  margin-bottom: 0.5rem;
+}
+
+.resource-type {
+  font-weight: 600;
+  color: #007bff;
+}
+
+.resource-description {
+  font-weight: 600;
+  color: #343a40;
+}
+
+.resource-reason {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Remediation Plan */
+.remediation-step {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.step-number {
+  background-color: #007bff;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.step-title {
+  font-weight: 600;
+  color: #343a40;
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.step-item strong {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.step-item p {
+  margin: 0;
+  color: #343a40;
+}
+
+/* Responsive timeline */
+@media (max-width: 768px) {
+  .timeline-container {
+    padding-left: 20px;
+  }
+  
+  .timeline-marker {
+    left: -16px;
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+  
+  .timeline-content {
+    margin-left: 10px;
+    padding: 0.75rem;
+  }
+
+  .metadata-grid, .error-details, .resources-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

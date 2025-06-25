@@ -1,0 +1,52 @@
+<div class="container py-4 chat-container">
+  <h2 class="text-center text-primary fw-bold mb-4 display-6">🧠 Observability Assistant</h2>
+
+  <!-- 💬 Zone de conversation -->
+  <div class="chat-box mb-3" id="chatBox">
+    <div *ngFor="let r of results" class="d-flex mb-4">
+      <div class="avatar me-3">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712107.png" alt="Assistant" />
+      </div>
+      <div class="chat-bubble assistant shadow-sm">
+        <div class="bubble-content">
+          <p class="mb-1"><strong>🧾 Message:</strong> {{ r.log_message }}</p>
+          <p *ngIf="r.rca?.root_cause" class="mb-1"><strong>🧠 Cause:</strong> {{ r.rca.root_cause }}</p>
+          <div *ngIf="r.remediation?.remediation_steps?.length">
+            <strong>🛠 Remediation:</strong>
+            <ul class="mb-1">
+              <li *ngFor="let step of r.remediation.remediation_steps">{{ step }}</li>
+            </ul>
+          </div>
+          <p *ngIf="r.remediation?.priority" class="mb-0">
+            <strong>🚦 Priority:</strong>
+            <span class="badge"
+              [ngClass]="{
+                'bg-success': r.remediation.priority === 'Low',
+                'bg-warning text-dark': r.remediation.priority === 'Medium',
+                'bg-danger': r.remediation.priority === 'High'
+              }">{{ r.remediation.priority }}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⏳ Loading -->
+  <div *ngIf="isLoading" class="text-center my-3">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2 text-muted">Analyzing your query...</p>
+  </div>
+
+  <!-- 📝 Zone de saisie -->
+  <div class="chat-input input-group input-group-lg">
+    <input
+      [(ngModel)]="message"
+      (keyup.enter)="sendMessage()"
+      class="form-control"
+      placeholder="Type your analysis query here..."
+    />
+    <button class="btn btn-primary" (click)="sendMessage()">Send</button>
+  </div>
+</div>

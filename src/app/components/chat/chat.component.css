@@ -1,0 +1,107 @@
+.chat-container {
+  position: relative;
+  max-width: 800px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* Watermark OBSERViX */
+.chat-container::before {
+  content: "OBSERViX";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-20deg);
+  font-size: 6rem;
+  font-weight: 900;
+  color: rgba(0, 123, 255, 0.05); /* Bleu très pâle */
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.chat-box {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  max-height: 60vh;
+  position: relative;
+  z-index: 1;
+}
+
+.chat-bubble.assistant {
+  background-color: #e7f1ff;
+  color: #084298;
+  border-radius: 12px;
+  padding: 1rem;
+  border-top-left-radius: 0;
+  animation: fadeIn 0.3s ease-in-out;
+  width: 100%;
+}
+
+.bubble-content p,
+.bubble-content ul {
+  margin-bottom: 0.5rem;
+}
+
+.avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.chat-input {
+  position: relative;
+  z-index: 1;
+}
+
+.chat-input input {
+  border-radius: 12px 0 0 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+}
+
+.chat-input button {
+  border-radius: 0 12px 12px 0;
+  padding: 0.75rem 1.2rem;
+  font-weight: 500;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.chat-container {
+  position: relative;
+  overflow: hidden;
+  /* autres styles déjà présents */
+}
+
+.chat-container::before {
+  content: "OBSERVIX";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-20deg);
+  font-size: 6rem;
+  font-weight: 900;
+  color: rgba(0, 123, 255, 0.05);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}

@@ -1,0 +1,44 @@
+<div class="chat-layout" style="background: linear-gradient(to right, #f0f4f8, #d9e2ec); min-height: 100vh; padding: 2rem;">
+  <div class="chatbot-wrapper" style="max-width: 900px; margin: auto; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden;">
+    
+    <!-- 🔵 Titre ajouté ici -->
+    <div style="background-color: #2c3e50; color: white; padding: 1rem; text-align: center;">
+      <h2 style="margin: 0; font-weight: 600; letter-spacing: 1px;">FIS ASSISTANT</h2>
+    </div>
+
+    <div class="chat-window" style="padding: 1rem; max-height: 400px; overflow-y: auto;">
+      <div *ngFor="let msg of messages" class="message" [ngClass]="msg.from">
+        {{ msg.text }}
+      </div>
+
+      <div *ngIf="isBotTyping" class="message bot typing">
+        The bot is typing...
+      </div>
+    </div>
+
+    <div class="chat-input-container" style="display: flex; gap: 0.5rem; padding: 1rem; border-top: 1px solid #eee;">
+      <input
+        [(ngModel)]="userQuestion"
+        placeholder="Describe your issue or type a Netprobe error..."
+        (keyup.enter)="onAskQuestion()"
+        class="form-control"
+        style="flex: 1;"
+      />
+      <button (click)="onAskQuestion()" class="btn btn-primary">Send</button>
+    </div>
+
+    <div class="chat-help" style="padding: 1rem; background-color: #f9f9f9; border-top: 1px solid #eee;">
+      <p><strong>Tip:</strong> Type full sentences like <code>permission error when running a script</code></p>
+      <button class="btn btn-outline-danger btn-sm mt-2" (click)="clearChat()">🗑 Clear conversation</button>
+    </div>
+  </div>
+
+  <div class="chat-history mt-4" style="max-width: 900px; margin: auto;">
+    <h4>History</h4>
+    <ul class="list-group">
+      <li *ngFor="let question of history" (click)="replayFromHistory(question)" class="list-group-item list-group-item-action">
+        {{ question }}
+      </li>
+    </ul>
+  </div>
+</div>

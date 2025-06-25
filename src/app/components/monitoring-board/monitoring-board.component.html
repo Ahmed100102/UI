@@ -1,0 +1,18 @@
+<div class="monitoring-board">
+  <h2 style="text-align: center;">📊 Log Distribution by Type</h2>
+
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" style="text-align: center; margin-top: 20px;">
+    Loading data...
+  </div>
+
+  <!-- Pie chart -->
+  <div *ngIf="!isLoading"
+       style="width: 100%; max-width: 600px; height: 400px; margin: auto;">
+    <canvas baseChart
+            [data]="chartData"
+            [options]="chartOptions"
+            chartType="pie">
+    </canvas>
+  </div>
+</div>

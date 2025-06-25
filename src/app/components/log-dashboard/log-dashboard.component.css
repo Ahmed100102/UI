@@ -1,0 +1,81 @@
+.dashboard-container {
+  padding: 1rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.loading, .empty {
+  font-style: italic;
+  color: gray;
+  margin-top: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  vertical-align: top;
+}
+
+th {
+  background-color: #f0f0f0;
+}
+
+td.error {
+  color: red;
+  font-weight: bold;
+}
+
+td.warning {
+  color: orange;
+}
+
+td.info {
+  color: green;
+}
+
+span.low {
+  color: green;
+  font-weight: bold;
+}
+
+span.medium {
+  color: orange;
+  font-weight: bold;
+}
+
+span.high {
+  color: red;
+  font-weight: bold;
+}

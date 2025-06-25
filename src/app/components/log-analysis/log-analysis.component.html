@@ -1,0 +1,27 @@
+<div class="log-analysis">
+  <h2>Analyse des logs</h2>
+
+  <form (ngSubmit)="startAnalysis()">
+    <label>Source:</label>
+    <input type="text" [(ngModel)]="source" name="source" required />
+
+    <label>Start Time:</label>
+    <input type="datetime-local" [(ngModel)]="start_time" name="start_time" required />
+
+    <label>End Time:</label>
+    <input type="datetime-local" [(ngModel)]="end_time" name="end_time" required />
+
+    <button type="submit">Lancer l'analyse</button>
+  </form>
+
+  <p><strong>Status:</strong> {{ status }}</p>
+
+  <ul *ngIf="results.length > 0">
+    <li *ngFor="let res of results">
+      <strong>{{ res.timestamp }}</strong> |
+      <span>{{ res.component }} - {{ res.log_message }}</span><br />
+      <em>Root cause:</em> {{ res.rca?.root_cause }} |
+      <em>Remédiation:</em> {{ res.remediation?.remediation_steps }}
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,90 @@
+/* Sidebar fixe à gauche */
+.sidebar.dark-theme {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background-color: #1e1e2f;
+  color: #ffffff;
+  width: 250px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Titre OBSERViX en vert */
+.sidebar-header h4 {
+  color: #4caf50;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+}
+
+/* Liens principaux */
+.nav-link {
+  color: #cfd8dc;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.nav-link:hover {
+  background-color: #2c2c3e;
+  color: #ffffff;
+}
+
+/* Sous-menu caché par défaut */
+.submenu {
+  display: none;
+  flex-direction: column;
+  margin-left: 1rem;
+}
+
+/* Affichage du sous-menu quand la checkbox est cochée */
+#analytics-toggle:checked + label + .submenu {
+  display: flex;
+}
+
+/* Liens du sous-menu */
+.submenu .nav-link.small {
+  background-color: #2a2a3b;
+  color: #a5d6a7;
+  margin: 4px 0;
+  padding: 0.5rem 1rem;
+  border-left: 3px solid #4caf50;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.submenu .nav-link.small:hover {
+  background-color: #3a3a4f;
+  color: #ffffff;
+}
+
+/* Bouton de déconnexion */
+.btn-logout {
+  background-color: #ff5252;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: auto;
+  width: 100%;
+  text-align: left;
+}
+
+.btn-logout:hover {
+  background-color: #ff1744;
+}
+
+/* Contenu principal décalé à droite de la sidebar */
+.main-content {
+  margin-left: 250px;
+  padding: 1rem;
+}

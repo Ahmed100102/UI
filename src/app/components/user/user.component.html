@@ -1,0 +1,11 @@
+<div class="d-flex" style="height: 100vh">
+  <!-- Sidebar gauche -->
+  <div style="width: 250px; background-color: #f8f9fa; border-right: 1px solid #ccc;">
+    <app-sidebar></app-sidebar> <!-- 👈 Assure-toi que c’est bien "app-sidebar" -->
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="flex-grow-1 p-3">
+    <router-outlet></router-outlet>
+  </div>
+</div>

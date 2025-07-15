@@ -1,0 +1,131 @@
+<div class="logs-container">
+  <div class="logs-header">
+    <h1 class="page-title">
+      <i class="fas fa-file-alt"></i>
+      System Logs
+    </h1>
+    <p class="page-subtitle">Monitor and analyze system activity</p>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filter-card">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="levelFilter">Log Level:</label>
+          <select id="levelFilter" [(ngModel)]="selectedLevel" (change)="onFilterChange()" class="filter-select">
+            <option value="all">All Levels</option>
+            <option value="error">Error</option>
+            <option value="warning">Warning</option>
+            <option value="info">Info</option>
+            <option value="debug">Debug</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="platformFilter">Platform:</label>
+          <select id="platformFilter" [(ngModel)]="selectedPlatform" (change)="onFilterChange()" class="filter-select">
+            <option value="all">All Platforms</option>
+            <option value="fiscd">FISCD</option>
+            <option value="vgm">VGM</option>
+            <option value="netprobe">NetProbe</option>
+          </select>
+        </div>
+
+        <div class="filter-group search-group">
+          <label for="searchInput">Search:</label>
+          <div class="search-input-wrapper">
+            <input 
+              type="text" 
+              id="searchInput"
+              [(ngModel)]="searchTerm" 
+              (input)="onSearch()" 
+              placeholder="Search logs..."
+              class="search-input">
+            <i class="fas fa-search search-icon"></i>
+          </div>
+        </div>
+
+        <div class="filter-actions">
+          <button class="export-btn" (click)="exportLogs()">
+            <i class="fas fa-download"></i>
+            Export
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Summary -->
+  <div class="results-summary">
+    <div class="summary-card">
+      <span class="results-count">{{ filteredLogs.length }} logs found</span>
+      <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+    </div>
+  </div>
+
+  <!-- Logs Table -->
+  <div class="logs-table-container">
+    <div class="table-wrapper">
+      <table class="logs-table">
+        <thead>
+          <tr>
+            <th class="timestamp-col">Timestamp</th>
+            <th class="level-col">Level</th>
+            <th class="source-col">Source</th>
+            <th class="platform-col">Platform</th>
+            <th class="message-col">Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of getPaginatedLogs()" [class]="getLogLevelClass(log.level)">
+            <td class="timestamp-cell">
+              <span class="timestamp">{{ formatTimestamp(log.timestamp) }}</span>
+            </td>
+            <td class="level-cell">
+              <span class="level-badge" [class]="'level-' + log.level">
+                {{ log.level.toUpperCase() }}
+              </span>
+            </td>
+            <td class="source-cell">
+              <span class="source">{{ log.source }}</span>
+            </td>
+            <td class="platform-cell">
+              <span class="platform-badge">{{ log.platform.toUpperCase() }}</span>
+            </td>
+            <td class="message-cell">
+              <span class="message">{{ log.message }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="totalPages > 1">
+    <div class="pagination">
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === 1" 
+        (click)="goToPage(currentPage - 1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      
+      <button 
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        class="page-btn"
+        [class.active]="currentPage === i + 1"
+        (click)="goToPage(i + 1)">
+        {{ i + 1 }}
+      </button>
+      
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === totalPages" 
+        (click)="goToPage(currentPage + 1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

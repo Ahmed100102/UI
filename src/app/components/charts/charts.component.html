@@ -92,6 +92,56 @@
           </div>
         </c-card-body>
       </c-card>
+
+      <!-- Time Range Filter -->
+      <div class="filter-section mt-3">
+        <div class="filter-card">
+          <div class="filter-header">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Time Range</span>
+          </div>
+          <div class="filter-content">
+            <div class="date-inputs">
+              <div class="input-group">
+                <label>From:</label>
+                <input type="date" [(ngModel)]="startDate" class="date-input">
+                <input type="time" [(ngModel)]="startTime" class="time-input">
+              </div>
+              <div class="input-group">
+                <label>To:</label>
+                <input type="date" [(ngModel)]="endDate" class="date-input">
+                <input type="time" [(ngModel)]="endTime" class="time-input">
+              </div>
+            </div>
+            <div class="filter-actions">
+              <button class="btn-apply">Apply Filter</button>
+              <button class="btn-clear">Clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Filters Display -->
+      <div class="active-filters mt-3" *ngIf="startDate || endDate || selectedPlatform !== 'all'">
+        <div class="filter-tags">
+          <span class="filter-tag">
+            <i class="fas fa-filter"></i>
+            Active Filters:
+          </span>
+          <span class="filter-tag" *ngIf="selectedPlatform !== 'all'">
+            Platform: {{ selectedPlatform.toUpperCase() }}
+            <i class="fas fa-times"></i>
+          </span>
+          <span class="filter-tag" *ngIf="startDate">
+            From: {{ startDate }}{{ startTime ? ' ' + startTime : '' }}
+            <i class="fas fa-times"></i>
+          </span>
+          <span class="filter-tag" *ngIf="endDate">
+            To: {{ endDate }}{{ endTime ? ' ' + endTime : '' }}
+            <i class="fas fa-times"></i>
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 

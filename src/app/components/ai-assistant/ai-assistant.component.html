@@ -1,0 +1,115 @@
+<div class="ai-assistant-container">
+  <div class="assistant-header">
+    <div class="header-content">
+      <div class="assistant-info">
+        <div class="assistant-avatar">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="assistant-details">
+          <h1 class="assistant-title">AI Assistant</h1>
+          <p class="assistant-status">
+            <span class="status-indicator online"></span>
+            Online and ready to help
+          </p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="header-btn" (click)="exportChat()" title="Export Chat">
+          <i class="fas fa-download"></i>
+        </button>
+        <button class="header-btn" (click)="clearChat()" title="Clear Chat">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-container">
+    <!-- Suggestions Panel -->
+    <div class="suggestions-panel" *ngIf="messages.length <= 1">
+      <h3 class="suggestions-title">
+        <i class="fas fa-lightbulb"></i>
+        Quick Actions
+      </h3>
+      <div class="suggestions-grid">
+        <div 
+          class="suggestion-card" 
+          *ngFor="let suggestion of suggestions"
+          (click)="useSuggestion(suggestion)">
+          <div class="suggestion-icon">
+            <i [class]="suggestion.icon"></i>
+          </div>
+          <div class="suggestion-content">
+            <h4 class="suggestion-title">{{ suggestion.title }}</h4>
+            <p class="suggestion-description">{{ suggestion.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="messages-container" #messagesContainer>
+      <div 
+        class="message" 
+        *ngFor="let message of messages"
+        [class.user-message]="message.sender === 'user'"
+        [class.assistant-message]="message.sender === 'assistant'">
+        
+        <div class="message-avatar" *ngIf="message.sender === 'assistant'">
+          <i class="fas fa-robot"></i>
+        </div>
+        
+        <div class="message-content">
+          <div class="message-bubble" [class]="'message-' + message.type">
+            <div class="message-text" [innerHTML]="formatMessageContent(message.content)"></div>
+            <div class="message-time">{{ formatTimestamp(message.timestamp) }}</div>
+          </div>
+        </div>
+        
+        <div class="message-avatar" *ngIf="message.sender === 'user'">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div class="message assistant-message" *ngIf="isTyping">
+        <div class="message-avatar">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="message-content">
+          <div class="message-bubble typing-indicator">
+            <div class="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-container">
+      <div class="input-wrapper">
+        <textarea 
+          [(ngModel)]="currentMessage"
+          (keydown.enter)="$event.shiftKey ? null : ($event.preventDefault(), sendMessage())"
+          placeholder="Ask me anything about your system..."
+          class="message-input"
+          rows="1"></textarea>
+        
+        <button 
+          class="send-button" 
+          (click)="sendMessage()"
+          [disabled]="!currentMessage.trim() || isTyping">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+      
+      <div class="input-hint">
+        Press Enter to send, Shift+Enter for new line
+      </div>
+    </div>
+  </div>
+</div>

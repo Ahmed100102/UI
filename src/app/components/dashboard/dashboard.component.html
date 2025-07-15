@@ -1,880 +1,143 @@
-<div class="main-content">
-  <div class="dashboard-container">
-    <!-- Header Section -->
-    <div class="dashboard-header">
-      <div class="header-content">
-        <h2>
-          <i class="fas fa-chart-line header-icon"></i>
-          Recent Logs Analytics
-        </h2>
-        <button class="btn-export" (click)="exportToExcel()">
-          <i class="fas fa-download"></i>
-          Export Excel
-        </button>
+<div class="dashboard">
+  <div class="dashboard-header">
+    <h1 class="page-title">
+      <i class="fas fa-tachometer-alt"></i>
+      System Overview
+    </h1>
+    <p class="page-subtitle">Monitor your infrastructure in real-time</p>
+  </div>
+
+  <!-- Metrics Cards -->
+  <div class="metrics-grid">
+    <div *ngFor="let metric of metrics" class="metric-card" [attr.data-color]="metric.color">
+      <div class="metric-icon">
+        <i [class]="metric.icon"></i>
       </div>
-    </div>
-
-    <!-- Advanced Filters Card -->
-    <div class="filters-card">
-      <div class="card-header">
-        <h5><i class="fas fa-filter"></i> Advanced Filters</h5>
-      </div>
-      <div class="filters-grid">
-        <!-- Date et heure de début -->
-        <div class="filter-group">
-          <label><i class="fas fa-calendar-alt"></i> Start Date</label>
-          <input type="date" [(ngModel)]="startDate" class="form-input" />
-        </div>
-        <div class="filter-group">
-          <label><i class="fas fa-clock"></i> Start Time</label>
-          <div class="time-input-container">
-            <input type="time" [(ngModel)]="startTime" class="form-input" />
-            <button type="button" class="clear-time-btn" (click)="clearStartTime()" title="Clear time">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Date et heure de fin -->
-        <div class="filter-group">
-          <label><i class="fas fa-calendar-alt"></i> End Date</label>
-          <input type="date" [(ngModel)]="endDate" class="form-input" />
-        </div>
-        <div class="filter-group">
-          <label><i class="fas fa-clock"></i> End Time</label>
-          <div class="time-input-container">
-            <input type="time" [(ngModel)]="endTime" class="form-input" />
-            <button type="button" class="clear-time-btn" (click)="clearEndTime()" title="Clear time">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Autres filtres -->
-        <div class="filter-group">
-          <label><i class="fas fa-shield-alt"></i> Log Level</label>
-          <select [(ngModel)]="selectedLevel" class="form-select">
-            <option value="">All Levels</option>
-            <option value="INFO">INFO</option>
-            <option value="WARN">WARN</option>
-            <option value="ERROR">ERROR</option>
-            <option value="DEBUG">DEBUG</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label><i class="fas fa-server"></i> Platform</label>
-          <select [(ngModel)]="selectedPlatform" class="form-select">
-            <option value="">All Platforms</option>
-            <option value="Netprobe">Netprobe</option>
-            <option value="VGM">VGM</option>
-            <option value="FISCD">FISCD</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label><i class="fas fa-search"></i> Search in Timestamp</label>
-          <input type="text" [(ngModel)]="selectedTimestamp" class="form-input" 
-                 placeholder="Search in timestamp..." />
-        </div>
-
-        <!-- Actions des filtres -->
-        <div class="filter-actions">
-          <button class="btn-reset" (click)="resetFilters()">
-            <i class="fas fa-undo"></i> Reset
-          </button>
-          <button class="btn-apply" (click)="applyFilters()">
-            <i class="fas fa-search"></i> Apply Filters
-          </button>
-        </div>
-      </div>
-
-      <!-- Résumé des filtres actifs -->
-      <div class="active-filters" *ngIf="startDate || endDate || selectedLevel || selectedPlatform || selectedTimestamp">
-        <div class="active-filters-header">
-          <i class="fas fa-filter"></i>
-          <span>Active Filters:</span>
-        </div>
-        <div class="filter-tags">
-          <span class="filter-tag" *ngIf="startDate">
-            <i class="fas fa-calendar"></i>
-            From: {{ startDate }}{{ startTime ? ' ' + startTime : '' }}
-            <button type="button" (click)="startDate = ''; startTime = ''; applyFilters()">×</button>
-          </span>
-          <span class="filter-tag" *ngIf="endDate">
-            <i class="fas fa-calendar"></i>
-            To: {{ endDate }}{{ endTime ? ' ' + endTime : '' }}
-            <button type="button" (click)="endDate = ''; endTime = ''; applyFilters()">×</button>
-          </span>
-          <span class="filter-tag" *ngIf="selectedLevel">
-            <i class="fas fa-shield-alt"></i>
-            Level: {{ selectedLevel }}
-            <button type="button" (click)="selectedLevel = ''; applyFilters()">×</button>
-          </span>
-          <span class="filter-tag" *ngIf="selectedPlatform">
-            <i class="fas fa-server"></i>
-            Platform: {{ selectedPlatform }}
-            <button type="button" (click)="selectedPlatform = ''; applyFilters()">×</button>
-          </span>
-          <span class="filter-tag" *ngIf="selectedTimestamp">
-            <i class="fas fa-search"></i>
-            Search: {{ selectedTimestamp }}
-            <button type="button" (click)="selectedTimestamp = ''; applyFilters()">×</button>
+      <div class="metric-content">
+        <div class="metric-header">
+          <h3 class="metric-title">{{ metric.title }}</h3>
+          <span class="metric-change" [class]="'change-' + metric.changeType">
+            {{ metric.change }}
           </span>
         </div>
-      </div>
-    </div>
-
-    <!-- Chart Section -->
-    <div class="chart-card" *ngIf="chartData.labels && chartData.labels.length > 0">
-      <div class="card-header">
-        <h5><i class="fas fa-chart-bar"></i> Logs Distribution by Hour</h5>
-        <span class="chart-info">
-          {{ filteredLogs.length > 0 ? 'Filtered' : 'All' }} logs: {{ (filteredLogs.length || logs.length) | number }}
-        </span>
-      </div>
-      <div class="chart-container">
-        <canvas baseChart
-                [data]="chartData"
-                [type]="'line'"
-                [options]="{
-                  responsive: true,
-                  plugins: {
-                    legend: { position: 'top' },
-                    title: { display: true, text: 'Logs per Hour' }
-                  },
-                  scales: {
-                    y: { beginAtZero: true }
-                  }
-                }">
-        </canvas>
-      </div>
-    </div>
-
-    <!-- Logs Table Card -->
-    <div class="table-card">
-      <div class="card-header">
-        <h5><i class="fas fa-list-alt"></i> System Logs</h5>
-        <div class="table-stats">
-          <span class="stats-badge">{{ (filteredLogs.length || logs.length) | number }} records</span>
-          <span class="stats-badge" *ngIf="filteredLogs.length > 0">
-            ({{ filteredLogs.length | number }} filtered from {{ logs.length | number }})
-          </span>
-        </div>
-      </div>
-      
-      <div class="table-container">
-        <table class="logs-table">
-          <thead>
-            <tr>
-              <th class="th-level">Level</th>
-              <th class="th-message">Message</th>
-              <th class="th-timestamp">Timestamp</th>
-              <th class="th-service">Service</th>
-              <th class="th-index">Index</th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let log of paginatedLogs; let i = index">
-              <!-- Main Row -->
-              <tr class="log-row" [class]="getLogLevelClass(log)">
-                <td class="td-level">
-                  <span class="level-badge" 
-                        [class.level-error]="log.level?.toLowerCase() === 'error'"
-                        [class.level-warn]="log.level?.toLowerCase() === 'warn'"
-                        [class.level-info]="log.level?.toLowerCase() === 'info'"
-                        [class.level-debug]="log.level?.toLowerCase() === 'debug'">
-                    {{ log.level }}
-                  </span>
-                </td>
-                <td class="td-message">
-                  <div class="message-container">
-                    <span class="message-text" [title]="log.message">
-                      {{ log.message | slice:0:100 }}
-                      <span *ngIf="log.message?.length > 100">...</span>
-                    </span>
-                    <button 
-                      *ngIf="log.message?.length > 100"
-                      class="expand-btn"
-                      (click)="toggleRow(i)"
-                      [class.expanded]="expandedRows.has(i)"
-                      type="button">
-                      <i class="fas fa-chevron-down expand-icon" 
-                         [class.rotated]="expandedRows.has(i)"></i>
-                    </button>
-                  </div>
-                </td>
-                <td class="td-timestamp">
-                  <div class="timestamp-container">
-                    <i class="fas fa-clock timestamp-icon"></i>
-                    <span>{{ formatDateTime(log.timestamp) }}</span>
-                  </div>
-                </td>
-                <td class="td-service">
-                  <div class="service-container">
-                    <i class="fas fa-desktop service-icon"></i>
-                    <span>{{ log.host?.name || 'N/A' }}</span>
-                  </div>
-                </td>
-                <td class="td-index">
-                  <span class="index-tag">{{ log.index | slice:0:20 }}</span>
-                </td>
-              </tr>
-              
-              <!-- Expanded Row -->
-              <tr *ngIf="expandedRows.has(i)" class="expanded-row">
-                <td colspan="5" class="expanded-cell">
-                  <div class="expanded-content">
-                    <div class="expanded-header">
-                      <i class="fas fa-file-alt"></i>
-                      <strong>Complete Message</strong>
-                      <span class="expanded-timestamp">{{ formatDateTime(log.timestamp) }}</span>
-                    </div>
-                    <div class="expanded-message">
-                      <pre>{{ log.message }}</pre>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-            </ng-container>
-            
-            <!-- Empty State -->
-            <tr *ngIf="paginatedLogs.length === 0" class="empty-row">
-              <td colspan="5" class="empty-cell">
-                <div class="empty-state">
-                  <i class="fas fa-search empty-icon"></i>
-                  <h6>No logs found</h6>
-                  <p *ngIf="filteredLogs.length === 0 && (startDate || endDate || selectedLevel || selectedPlatform || selectedTimestamp)">
-                    Try adjusting your filters to see more results
-                  </p>
-                  <p *ngIf="logs.length === 0">No logs available in the system</p>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Pagination -->
-    <div *ngIf="totalPages > 1" class="pagination-container">
-      <div class="pagination-info">
-        Showing {{ ((currentPage - 1) * pageSize) + 1 }} to {{ Math.min(currentPage * pageSize, (filteredLogs.length || logs.length)) }} of {{ (filteredLogs.length || logs.length) | number }} entries
-      </div>
-      <div class="pagination">
-        <button class="page-btn page-prev" 
-                [disabled]="currentPage === 1"
-                (click)="changePage(currentPage - 1)">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        
-        <span class="page-numbers">
-          <button *ngFor="let page of [].constructor(Math.min(totalPages, 7)); let i = index" 
-                  class="page-btn page-number"
-                  [class.active]="currentPage === i + 1"
-                  (click)="changePage(i + 1)">
-            {{ i + 1 }}
-          </button>
-        </span>
-        
-        <button class="page-btn page-next" 
-                [disabled]="currentPage === totalPages"
-                (click)="changePage(currentPage + 1)">
-          <i class="fas fa-chevron-right"></i>
-        </button>
+        <div class="metric-value">{{ metric.value }}</div>
       </div>
     </div>
   </div>
 
+  <!-- Charts Section -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3 class="chart-title">
+          <i class="fas fa-chart-line"></i>
+          Log Volume Trends
+        </h3>
+        <div class="chart-actions">
+          <button class="chart-btn">
+            <i class="fas fa-expand"></i>
+          </button>
+          <button class="chart-btn">
+            <i class="fas fa-download"></i>
+          </button>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas baseChart
+                [data]="logVolumeData"
+                [options]="chartOptions"
+                type="line">
+        </canvas>
+      </div>
+    </div>
 
-    <!-- Chart Section -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3 class="chart-title">
+          <i class="fas fa-chart-pie"></i>
+          Error Distribution
+        </h3>
+        <div class="chart-actions">
+          <button class="chart-btn">
+            <i class="fas fa-expand"></i>
+          </button>
+          <button class="chart-btn">
+            <i class="fas fa-download"></i>
+          </button>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas baseChart
+                [data]="errorDistributionData"
+                [options]="chartOptions"
+                type="doughnut">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="activity-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fas fa-clock"></i>
+        Recent Activity
+      </h2>
+      <button class="view-all-btn">View All</button>
+    </div>
     
+    <div class="activity-list">
+      <div class="activity-item">
+        <div class="activity-icon critical">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="activity-content">
+          <div class="activity-title">Critical error in payment service</div>
+          <div class="activity-time">2 minutes ago</div>
+        </div>
+        <div class="activity-status">
+          <span class="status-badge critical">Critical</span>
+        </div>
+      </div>
+
+      <div class="activity-item">
+        <div class="activity-icon warning">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="activity-content">
+          <div class="activity-title">High memory usage detected</div>
+          <div class="activity-time">15 minutes ago</div>
+        </div>
+        <div class="activity-status">
+          <span class="status-badge warning">Warning</span>
+        </div>
+      </div>
+
+      <div class="activity-item">
+        <div class="activity-icon success">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="activity-content">
+          <div class="activity-title">Database backup completed</div>
+          <div class="activity-time">1 hour ago</div>
+        </div>
+        <div class="activity-status">
+          <span class="status-badge success">Success</span>
+        </div>
+      </div>
+
+      <div class="activity-item">
+        <div class="activity-icon info">
+          <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="activity-content">
+          <div class="activity-title">System maintenance scheduled</div>
+          <div class="activity-time">3 hours ago</div>
+        </div>
+        <div class="activity-status">
+          <span class="status-badge info">Info</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<style>
-/* Main Layout */
-.main-content {
-   margin-left: 70px;
-  padding: 0;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #edeef0 0%, #dfdfdf 100%);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.dashboard-container {
-  padding: 2rem;
-  max-width: 99%;
-  overflow-x: hidden;
-}
-
-/* Header */
-.dashboard-header {
-  margin-bottom: 2rem;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 1.5rem 2rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.header-content h2 {
-  margin: 0;
-  color: #1e1e2f;
-  font-weight: 700;
-  font-size: 1.8rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.header-icon {
-  color: #4caf50;
-  font-size: 1.6rem;
-}
-
-.btn-export {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 10px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-}
-
-.btn-export:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-}
-
-/* Filters Card */
-.filters-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 2rem;
-  overflow: hidden;
-}
-
-.card-header {
-  background: linear-gradient(135deg, #1e1e2f 0%, #2c2c3e 100%);
-  color: white;
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.card-header h5 {
-  margin: 0;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.card-header i {
-  color: #4caf50;
-}
-
-.filters-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  padding: 1.5rem;
-  align-items: end;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.filter-group label {
-  font-weight: 600;
-  color: #1e1e2f;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.filter-group i {
-  color: #4caf50;
-  width: 16px;
-}
-
-.form-input,
-.form-select {
-  background: white;
-  border: 2px solid #e0e7ff;
-  border-radius: 8px;
-  padding: 0.75rem;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  color: #1e1e2f;
-}
-
-.form-input:focus,
-.form-select:focus {
-  outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-}
-
-.filter-actions {
-  display: flex;
-  gap: 0.75rem;
-  align-items: end;
-}
-
-.btn-reset,
-.btn-apply {
-  padding: 0.75rem 1.25rem;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.btn-reset {
-  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-  color: white;
-}
-
-.btn-apply {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-}
-
-.btn-reset:hover,
-.btn-apply:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Table Card */
-.table-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 2rem;
-  overflow: hidden;
-}
-
-.table-stats {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.stats-badge {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-  max-width: 100%;
-}
-
-.logs-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.logs-table thead {
-  background: linear-gradient(135deg, #1e1e2f 0%, #2c2c3e 100%);
-  color: white;
-}
-
-.logs-table th {
-  padding: 1rem;
-  text-align: left;
-  font-weight: 600;
-  border: none;
-}
-
-.th-level { width: 10%; }
-.th-message { width: 45%; }
-.th-timestamp { width: 18%; }
-.th-service { width: 15%; }
-.th-index { width: 12%; }
-
-.log-row {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.log-row:hover {
-  background: rgba(76, 175, 80, 0.05);
-  transform: translateX(2px);
-}
-
-.logs-table td {
-  padding: 1rem;
-  vertical-align: middle;
-  border: none;
-}
-
-/* Level Badge */
-.level-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.level-error {
-  background: linear-gradient(135deg, #ff5252 0%, #f44336 100%);
-  color: white;
-}
-
-.level-warn {
-  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-  color: white;
-}
-
-.level-info {
-  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
-  color: white;
-}
-
-.level-debug {
-  background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
-  color: white;
-}
-
-/* Message Container */
-.message-container {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  width: 100%;
-}
-
-.message-text {
-  flex: 1;
-  line-height: 1.5;
-  color: #2c2c3e;
-  word-break: break-word;
-}
-
-.expand-btn {
-  background: none;
-  border: none;
-  color: #4caf50;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-}
-
-.expand-btn:hover {
-  background: rgba(76, 175, 80, 0.1);
-  transform: scale(1.1);
-}
-
-.expand-icon {
-  transition: transform 0.3s ease;
-  font-size: 0.8rem;
-}
-
-.expand-icon.rotated {
-  transform: rotate(180deg);
-}
-
-/* Timestamp and Service */
-.timestamp-container,
-.service-container {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #2c2c3e;
-}
-
-.timestamp-icon,
-.service-icon {
-  color: #4caf50;
-  font-size: 0.8rem;
-}
-
-.index-tag {
-  background: rgba(76, 175, 80, 0.1);
-  color: #4caf50;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  font-family: 'Courier New', monospace;
-}
-
-/* Expanded Row */
-.expanded-row {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.05) 0%, rgba(76, 175, 80, 0.02) 100%);
-}
-
-.expanded-cell {
-  padding: 0 !important;
-}
-
-.expanded-content {
-  padding: 1.5rem;
-  border-left: 4px solid #4caf50;
-  background: white;
-  margin: 0.5rem;
-  border-radius: 8px;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.expanded-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  color: #1e1e2f;
-}
-
-.expanded-header i {
-  color: #4caf50;
-}
-
-.expanded-message pre {
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 6px;
-  border: 1px solid #e9ecef;
-  font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  color: #2c2c3e;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  margin: 0;
-}
-
-/* Empty State */
-.empty-row {
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.empty-cell {
-  padding: 3rem !important;
-  text-align: center;
-}
-
-.empty-state {
-  color: #6c757d;
-}
-
-.empty-icon {
-  font-size: 3rem;
-  color: #dee2e6;
-  margin-bottom: 1rem;
-}
-
-.empty-state h6 {
-  margin: 0.5rem 0;
-  color: #495057;
-}
-
-.empty-state p {
-  margin: 0;
-  color: #6c757d;
-}
-
-/* Pagination */
-.pagination-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-}
-
-.pagination-info {
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-
-.pagination {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.page-btn {
-  background: white;
-  border: 1px solid #dee2e6;
-  color: #6c757d;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-}
-
-.page-btn:hover:not(:disabled) {
-  background: #4caf50;
-  color: white;
-  border-color: #4caf50;
-}
-
-.page-btn.active {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-  border-color: #4caf50;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-numbers {
-  display: flex;
-  gap: 0.25rem;
-}
-
-/* Chart Card */
-.chart-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  overflow: hidden;
-}
-
-.chart-container {
-  padding: 2rem;
-  background: white;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .main-content {
-    margin-left: 0;
-    padding: 0;
-  }
-  
-  .dashboard-container {
-    padding: 1rem;
-  }
-  
-  .filters-grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-  }
-  
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-  }
-}
-
-@media (max-width: 768px) {
-  .filters-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .filter-actions {
-    flex-direction: column;
-  }
-  
-  .table-container {
-    font-size: 0.8rem;
-  }
-  
-  .logs-table th,
-  .logs-table td {
-    padding: 0.75rem 0.5rem;
-  }
-  
-  .pagination-container {
-    flex-direction: column;
-    gap: 1rem;
-  }
-}
-
-/* Scrollbar Styling */
-.table-container::-webkit-scrollbar {
-  height: 6px;
-}
-
-.table-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  border-radius: 10px;
-}
-
-.table-container::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #45a049 0%, #388e3c 100%);
-}
-
-/* Enhanced Animations */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.dashboard-container > * {
-  animation: slideInUp 0.6s ease forwards;
-}
-
-.dashboard-container > *:nth-child(2) { animation-delay: 0.1s; }
-.dashboard-container > *:nth-child(3) { animation-delay: 0.2s; }
-.dashboard-container > *:nth-child(4) { animation-delay: 0.3s; }
-.dashboard-container > *:nth-child(5) { animation-delay: 0.4s; }
-</style>

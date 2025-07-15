@@ -1,0 +1,41 @@
+<header class="header">
+  <div class="header-left">
+    <div class="breadcrumb">
+      <i class="fas fa-home"></i>
+      <span class="separator">/</span>
+      <span class="current-page">{{ currentRoute }}</span>
+    </div>
+  </div>
+  
+  <div class="header-center">
+    <div class="search-container">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" placeholder="Search logs, metrics, or alerts..." class="search-input">
+      <div class="search-shortcut">⌘K</div>
+    </div>
+  </div>
+  
+  <div class="header-right">
+    <div class="time-display">
+      <i class="fas fa-clock"></i>
+      <span>{{ currentTime | date:'HH:mm:ss' }}</span>
+    </div>
+    
+    <div class="notifications">
+      <button class="notification-btn">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge">3</span>
+      </button>
+    </div>
+    
+    <div class="user-profile">
+      <div class="avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="user-info">
+        <span class="user-name">Admin User</span>
+        <span class="user-role">System Administrator</span>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,212 @@
+<div class="monitoring">
+  <div class="monitoring-header">
+    <h1 class="page-title">
+      <i class="fas fa-desktop"></i>
+      System Monitoring
+    </h1>
+    <p class="page-subtitle">Real-time system health and performance monitoring</p>
+  </div>
+
+  <!-- System Metrics Grid -->
+  <div class="metrics-grid">
+    <div *ngFor="let metric of systemMetrics" class="metric-card" [class]="getStatusClass(metric.status)">
+      <div class="metric-header">
+        <div class="metric-name">{{ metric.name }}</div>
+        <div class="metric-trend">
+          <i [class]="getTrendIcon(metric.trend)"></i>
+        </div>
+      </div>
+      <div class="metric-value">
+        {{ metric.value | number:'1.0-1' }}{{ metric.unit }}
+      </div>
+      <div class="metric-status">
+        <span class="status-indicator" [class]="getStatusClass(metric.status)"></span>
+        {{ metric.status | titlecase }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-time Chart -->
+  <div class="chart-section">
+    <div class="chart-card">
+      <div class="chart-header">
+        <h2 class="chart-title">
+          <i class="fas fa-chart-line"></i>
+          Real-time Performance
+        </h2>
+        <div class="chart-controls">
+          <div class="live-indicator">
+            <span class="live-dot"></span>
+            LIVE
+          </div>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas baseChart
+                [data]="realTimeData"
+                [options]="chartOptions"
+                type="line">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alerts Section -->
+  <div class="alerts-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fas fa-bell"></i>
+        Active Alerts
+        <span class="alert-count">{{ alerts.filter(a => a.status === 'active').length }}</span>
+      </h2>
+      <div class="alert-filters">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Critical</button>
+        <button class="filter-btn">High</button>
+        <button class="filter-btn">Medium</button>
+      </div>
+    </div>
+
+    <div class="alerts-list">
+      <div *ngFor="let alert of alerts" class="alert-item" [class]="getSeverityClass(alert.severity)">
+        <div class="alert-severity">
+          <div class="severity-indicator" [class]="getSeverityClass(alert.severity)"></div>
+        </div>
+        
+        <div class="alert-content">
+          <div class="alert-header">
+            <h4 class="alert-title">{{ alert.title }}</h4>
+            <div class="alert-meta">
+              <span class="alert-source">{{ alert.source }}</span>
+              <span class="alert-time">{{ alert.timestamp | date:'short' }}</span>
+            </div>
+          </div>
+          <p class="alert-description">{{ alert.description }}</p>
+        </div>
+
+        <div class="alert-actions">
+          <button *ngIf="alert.status === 'active'" 
+                  class="action-btn acknowledge"
+                  (click)="acknowledgeAlert(alert.id)">
+            <i class="fas fa-check"></i>
+            Acknowledge
+          </button>
+          <button *ngIf="alert.status === 'acknowledged'" 
+                  class="action-btn resolve"
+                  (click)="resolveAlert(alert.id)">
+            <i class="fas fa-times"></i>
+            Resolve
+          </button>
+          <span *ngIf="alert.status === 'resolved'" class="status-resolved">
+            <i class="fas fa-check-circle"></i>
+            Resolved
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Status Overview -->
+  <div class="status-overview">
+    <div class="overview-header">
+      <h2 class="overview-title">
+        <i class="fas fa-server"></i>
+        Infrastructure Status
+      </h2>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">
+          <i class="fas fa-database"></i>
+        </div>
+        <div class="service-info">
+          <h4 class="service-name">Database</h4>
+          <div class="service-status healthy">
+            <span class="status-dot"></span>
+            Operational
+          </div>
+        </div>
+        <div class="service-metrics">
+          <div class="metric">
+            <span class="metric-label">Connections</span>
+            <span class="metric-value">45/100</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Response</span>
+            <span class="metric-value">12ms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">
+          <i class="fas fa-cloud"></i>
+        </div>
+        <div class="service-info">
+          <h4 class="service-name">API Gateway</h4>
+          <div class="service-status healthy">
+            <span class="status-dot"></span>
+            Operational
+          </div>
+        </div>
+        <div class="service-metrics">
+          <div class="metric">
+            <span class="metric-label">Requests/min</span>
+            <span class="metric-value">2.4K</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Latency</span>
+            <span class="metric-value">145ms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">
+          <i class="fas fa-memory"></i>
+        </div>
+        <div class="service-info">
+          <h4 class="service-name">Cache</h4>
+          <div class="service-status warning">
+            <span class="status-dot"></span>
+            Degraded
+          </div>
+        </div>
+        <div class="service-metrics">
+          <div class="metric">
+            <span class="metric-label">Hit Rate</span>
+            <span class="metric-value">78%</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Memory</span>
+            <span class="metric-value">1.2GB</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <div class="service-info">
+          <h4 class="service-name">Search Engine</h4>
+          <div class="service-status healthy">
+            <span class="status-dot"></span>
+            Operational
+          </div>
+        </div>
+        <div class="service-metrics">
+          <div class="metric">
+            <span class="metric-label">Index Size</span>
+            <span class="metric-value">45GB</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Queries/s</span>
+            <span class="metric-value">156</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,105 +1,43 @@
 import { Routes } from '@angular/router';
-import { SigninComponent } from './components/signin/signin.component';
-import { NotfoundComponent } from './components/notfound/notfound.component';
-import { UserComponent } from './components/user/user.component';
-import { AdminComponent } from './components/admin/admin.component';
-import { UserHomeComponent } from './components/user/user-home/user-home.component';
-import { AdminHomeComponent } from './components/admin/admin-home/admin-home.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  
   {
-    path: 'login',
+    path: 'dashboard',
     loadComponent: () =>
-      import('./components/login/login.component').then(m => m.LoginComponent),
+      import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent),
   },
-
+  
   {
-    path: 'register',
+    path: 'analytics',
     loadComponent: () =>
-      import('./components/signup/signup.component').then(m => m.SignupComponent),
+      import('./components/analytics/analytics.component').then(m => m.AnalyticsComponent)
   },
-
-  { path: 'signin', component: SigninComponent },
-
+  
   {
-    path: 'user',
-    component: UserComponent,
-    children: [
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
-      { path: 'home', component: UserHomeComponent },
-      {
-        path: 'dashboard',
-        loadComponent: () =>
-          import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent)
-      },
-      {
-        path: 'advanced-dashboard',
-        loadComponent: () =>
-          import('./components/advanced-dashboard/advanced-dashboard.component').then(m => m.AdvancedDashboardComponent)
-      },
-      {
-        path: 'dashboard-pro',
-        loadComponent: () =>
-          import('./components/dashboard-pro/dashboard-pro.component').then(m => m.DashboardProComponent)
-      },
-      {
-        path: 'monitoring',
-        loadComponent: () =>
-          import('./components/monitoring-board/monitoring-board.component').then(m => m.MonitoringBoardComponent)
-      },
-      {
-        path: 'dynamic-dashboard',
-        loadComponent: () =>
-          import('./components/dynamic-dashboard/dynamic-dashboard.component').then(m => m.DynamicDashboardComponent)
-      },
-      {
-        path: 'chatbot',
-        loadComponent: () =>
-          import('./components/chatbot/chatbot.component').then(m => m.ChatbotComponent)
-      },
-      {
-        path: 'log-dashboard',
-        loadComponent: () =>
-          import('./components/log-dashboard/log-dashboard.component').then(m => m.LogDashboardComponent)
-      },
-      {
-        path: 'log-analysis',
-        loadComponent: () =>
-          import('./components/log-analysis/log-analysis.component').then(m => m.LogAnalysisComponent)
-      },
-      {
-        path: 'chat',
-        loadComponent: () =>
-          import('./components/chat/chat.component').then(m => m.ChatComponent)
-      },
-      {
-        path: 'index-observix',
-        loadComponent: () =>
-          import('./components/index-observix/index-observix.component').then(m => m.IndexObservixComponent)
-      },
-      {
-        path: 'issues',
-        loadComponent: () =>
-          import('./components/issues/issues.component').then(m => m.IssuesComponent)
-      },
-      {
-        path: 'charts',
-        loadComponent: () =>
-          import('./components/charts/charts.component').then(m => m.ChartsComponent)
-      }
-    ]
+    path: 'monitoring',
+    loadComponent: () =>
+      import('./components/monitoring/monitoring.component').then(m => m.MonitoringComponent)
   },
-
+  
   {
-    path: 'admin',
-    component: AdminComponent,
-    children: [
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
-      { path: 'home', component: AdminHomeComponent },
-    ],
+    path: 'logs',
+    loadComponent: () =>
+      import('./components/logs/logs.component').then(m => m.LogsComponent)
   },
-
-  { path: '**', component: NotfoundComponent }
+  
+  {
+    path: 'issues',
+    loadComponent: () =>
+      import('./components/issues/issues.component').then(m => m.IssuesComponent)
+  },
+  
+  {
+    path: 'ai-assistant',
+    loadComponent: () =>
+      import('./components/ai-assistant/ai-assistant.component').then(m => m.AiAssistantComponent)
+  },
+  
+  { path: '**', redirectTo: '/dashboard' }
 ];

@@ -1,48 +1,45 @@
-<div class="sidebar dark-theme">
+<aside class="sidebar" [class.collapsed]="isCollapsed">
   <div class="sidebar-header">
-    <h4>OBSERViX</h4>
-  </div>
-
-  <nav class="sidebar-nav">
-    <a routerLink="/user/home" class="nav-link">
-      <i class="bi bi-house-door-fill"></i> Home
-    </a> 
-    <a routerLink="/user/issues" class="nav-link">
-      <i class="bi bi-graph-up"></i> ISSUES
-    </a>
-    <a routerLink="/user/charts" class="nav-link">
-      <i class="bi bi-graph-up"></i> ALL
-    </a>
-
-    <!--<a routerLink="/user/dashboard" class="nav-link">
-      <i class="bi bi-graph-up"></i> Dashboard
-    </a>/-->
-    
-    
-
-
-    <div class="submenu-container">
-      <input type="checkbox" id="analytics-toggle" hidden>
-      <label for="analytics-toggle" class="nav-link submenu-toggle">
-        <i class="bi bi-bar-chart-line"></i> Analytics
-        <i class="bi bi-chevron-down toggle-icon"></i>
-      </label>
-
-      <div class="submenu">
-      
-       
-  
-       <!-- <a routerLink="/user/dynamic-dashboard" class="nav-link small"> Dynamic Dashboard</a>-->
-        <a routerLink="/user/chatbot" class="nav-link small"> Error Assistant</a>
-        <a routerLink="/user/chat" class="nav-link small">AI driven observability platform</a>
-        
+    <div class="logo" [class.collapsed]="isCollapsed">
+      <div class="logo-icon">
+        <i class="fas fa-eye"></i>
       </div>
+      <span class="logo-text" *ngIf="!isCollapsed">OBSERViX</span>
     </div>
-  </nav>
-
-  <div class="sidebar-footer mt-auto">
-    <button class="btn-logout" (click)="logout()">
-      <i class="bi bi-box-arrow-right"></i> Logout
+    <button class="collapse-btn" (click)="toggleSidebar()">
+      <i class="fas" [class.fa-chevron-left]="!isCollapsed" [class.fa-chevron-right]="isCollapsed"></i>
     </button>
   </div>
-</div>
+  
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      <li *ngFor="let item of menuItems" class="nav-item">
+        <a 
+          [routerLink]="item.route" 
+          routerLinkActive="active"
+          class="nav-link"
+          [title]="isCollapsed ? item.label : ''"
+        >
+          <div class="nav-icon">
+            <i [class]="item.icon"></i>
+          </div>
+          <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+          <span class="nav-badge" *ngIf="item.badge && !isCollapsed">{{ item.badge }}</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  
+  <div class="sidebar-footer" *ngIf="!isCollapsed">
+    <div class="system-status">
+      <div class="status-indicator">
+        <div class="status-dot online"></div>
+        <span>System Online</span>
+      </div>
+      <div class="uptime">
+        <i class="fas fa-clock"></i>
+        <span>Uptime: 99.9%</span>
+      </div>
+    </div>
+  </div>
+</aside>

@@ -1,90 +1,256 @@
-/* Sidebar fixe à gauche */
-.sidebar.dark-theme {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  background-color: #1e1e2f;
-  color: #ffffff;
-  width: 250px;
-  height: 100vh;
+.sidebar {
+  width: 280px;
+  background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+  color: #e2e8f0;
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  font-family: 'Segoe UI', sans-serif;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 200;
 }
 
-/* Titre OBSERViX en vert */
-.sidebar-header h4 {
-  color: #4caf50;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  font-size: 1.4rem;
+.sidebar.collapsed {
+  width: 80px;
 }
 
-/* Liens principaux */
-.nav-link {
-  color: #cfd8dc;
-  padding: 0.75rem 1rem;
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.logo.collapsed {
+  justify-content: center;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+.collapse-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #e2e8f0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.collapse-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1rem 0;
+  overflow-y: auto;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  margin-bottom: 0.5rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  color: #cbd5e1;
   text-decoration: none;
-  border-radius: 5px;
-  transition: background 0.3s, color 0.3s;
+  transition: all 0.3s ease;
+  position: relative;
+  border-radius: 0 25px 25px 0;
+  margin-right: 1rem;
 }
 
 .nav-link:hover {
-  background-color: #2c2c3e;
+  background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
+  transform: translateX(5px);
 }
 
-/* Sous-menu caché par défaut */
-.submenu {
-  display: none;
-  flex-direction: column;
-  margin-left: 1rem;
+.nav-link.active {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+  color: #ffffff;
+  border-right: 3px solid #667eea;
 }
 
-/* Affichage du sous-menu quand la checkbox est cochée */
-#analytics-toggle:checked + label + .submenu {
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 0 4px 4px 0;
+}
+
+.nav-icon {
+  width: 24px;
+  height: 24px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 
-/* Liens du sous-menu */
-.submenu .nav-link.small {
-  background-color: #2a2a3b;
-  color: #a5d6a7;
-  margin: 4px 0;
-  padding: 0.5rem 1rem;
-  border-left: 3px solid #4caf50;
-  border-radius: 4px;
-  font-size: 0.9rem;
+.nav-label {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.95rem;
 }
 
-.submenu .nav-link.small:hover {
-  background-color: #3a3a4f;
-  color: #ffffff;
-}
-
-/* Bouton de déconnexion */
-.btn-logout {
-  background-color: #ff5252;
+.nav-badge {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
   color: white;
-  border: none;
-  padding: 0.75rem;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: auto;
-  width: 100%;
-  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  min-width: 20px;
+  text-align: center;
 }
 
-.btn-logout:hover {
-  background-color: #ff1744;
+.sidebar-footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Contenu principal décalé à droite de la sidebar */
-.main-content {
-  margin-left: 250px;
+.system-status {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
   padding: 1rem;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-dot.online {
+  background: #10b981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.uptime {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.uptime i {
+  color: #667eea;
+}
+
+/* Scrollbar styling */
+.sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Collapsed state adjustments */
+.sidebar.collapsed .nav-link {
+  justify-content: center;
+  padding: 1rem;
+  margin-right: 0;
+  border-radius: 0;
+}
+
+.sidebar.collapsed .nav-icon {
+  margin-right: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
 }
